@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/Bnei-Baruch/homer-limud/api"
+	"github.com/Bnei-Baruch/study-material/api"
 	"github.com/spf13/cobra"
 )
 

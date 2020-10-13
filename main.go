@@ -1,6 +1,6 @@
 package main
 
-import "github.com/Bnei-Baruch/homer-limud/cmd"
+import "github.com/Bnei-Baruch/study-material/cmd"
 
 func main() {
 	cmd.Execute()

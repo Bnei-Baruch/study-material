@@ -1,4 +1,4 @@
-module github.com/Bnei-Baruch/homer-limud
+module github.com/Bnei-Baruch/study-material
 
 go 1.13
 

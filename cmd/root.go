@@ -7,7 +7,7 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "homer-limud",
+	Use:   "study-material",
 	Short: "Homer limud service",
 }
 
