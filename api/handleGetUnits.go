@@ -1,9 +1,12 @@
 package api
 
 import (
+	"context"
 	"database/sql"
 	"encoding/json"
+	"github.com/Bnei-Baruch/study-material/models"
 	_ "github.com/lib/pq"
+	"github.com/volatiletech/sqlboiler/boil"
 	"log"
 	"net/http"
 )
@@ -15,10 +18,17 @@ type UnitForClient struct {
 
 func handleGetUnits(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
+
+
 	db, err := sql.Open("postgres", "postgres://postgres:12345@localhost/sm?sslmode=disable")
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	u := &models.Unit{Title: "title 2", Description: "description 2"}
+	err = u.Insert(context.Background(), db,boil.Infer())
+
+
 
 	var (
 		id          int
