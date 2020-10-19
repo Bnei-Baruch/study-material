@@ -1,25 +1,25 @@
 package api
 
 import (
-	"database/sql"
+	"encoding/json"
+	"github.com/Bnei-Baruch/study-material/common"
 	"github.com/Bnei-Baruch/study-material/models"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"golang.org/x/net/context"
-	"log"
 	"net/http"
 )
 
 func handleAddUnit(w http.ResponseWriter, r *http.Request) {
-	//vars := mux.Vars(r)
+	title := r.FormValue("title")
+	description := r.FormValue("body")
 
-	db, err := sql.Open("postgres", "postgres://postgres:12345@localhost/sm?sslmode=disable")
-	if err != nil {
-		log.Fatal(err)
-	}
+	u := &models.Unit{Title: title, Description: description}
+	err := u.Insert(context.Background(), common.DB, boil.Infer())
+	common.FatalIfNil(err)
 
-	u := &models.Unit{Title: "title 2", Description: "description 2"}
-	err = u.Insert(context.Background(), db, boil.Infer())
+	res, errM := json.Marshal(common.PostResult{Id: u.UnitID})
+	common.FatalIfNil(errM)
 
 	w.WriteHeader(http.StatusOK)
-	w.Write(u.ID)
+	w.Write(res)
 }

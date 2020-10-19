@@ -2,64 +2,44 @@ package api
 
 import (
 	"context"
-	"database/sql"
 	"encoding/json"
+	"github.com/Bnei-Baruch/study-material/common"
 	"github.com/Bnei-Baruch/study-material/models"
 	_ "github.com/lib/pq"
-	"github.com/volatiletech/sqlboiler/boil"
+	"github.com/volatiletech/sqlboiler/v4/boil"
 	"log"
 	"net/http"
 )
 
-type UnitForClient struct {
-	title       string `json: "title"`
-	description string `json: "description"`
-}
-
 func handleGetUnits(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 
-
-	db, err := sql.Open("postgres", "postgres://postgres:12345@localhost/sm?sslmode=disable")
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	u := &models.Unit{Title: "title 2", Description: "description 2"}
-	err = u.Insert(context.Background(), db,boil.Infer())
-
-
+	err := u.Insert(context.Background(), common.DB, boil.Columns{})
+	common.FatalIfNil(err)
 
 	var (
-		id          int
+		unitId      int
 		title       string
 		description string
 	)
 
-	rows, err := db.Query("select id, title, description from units")
+	rows, err := common.DB.Query("select unit_id, title, description from units")
+	common.FatalIfNil(err)
 
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer rows.Close()
-
-	units := []UnitForClient{}
+	var units []common.UnitForClient
 	for rows.Next() {
-		err := rows.Scan(&id, &description, &title)
-		if err != nil {
-			log.Fatal(err)
-		}
+		err := rows.Scan(&unitId, &title, &description)
+		common.FatalIfNil(err)
 
-		units = append(units, UnitForClient{title: title, description: description})
-		log.Println(id, title, description)
+		units = append(units, common.UnitForClient{Title: title, Description: description})
+		log.Println(unitId, title, description)
 	}
 	err = rows.Err()
-	if err != nil {
-		log.Fatal(err)
-	}
+	common.FatalIfNil(err)
+
 	b, err := json.Marshal(units)
-	if err != nil {
-		log.Fatal(err)
-	}
+
+	w.WriteHeader(http.StatusOK)
 	w.Write(b)
 }

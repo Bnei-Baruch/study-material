@@ -8,8 +8,8 @@ import (
 
 func Init() {
 	router := mux.NewRouter()
-	router.HandleFunc("/units", handleGetUnits).Methods("GET")
-	router.HandleFunc("/unit/{cId}", handleGetUnits).Methods("POST")
+	router.HandleFunc("/api/units", handleGetUnits).Methods("GET")
+	router.HandleFunc("/api/unit", handleAddUnit).Methods("POST")
 
 	router.Use(middleware)
 

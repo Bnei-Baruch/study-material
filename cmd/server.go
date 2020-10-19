@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/Bnei-Baruch/study-material/api"
+	"github.com/Bnei-Baruch/study-material/common"
 	"github.com/spf13/cobra"
 )
 
@@ -16,5 +17,9 @@ func init() {
 }
 
 func serverFn(cmd *cobra.Command, args []string) {
+	common.Init()
+
 	api.Init()
+
+	common.Close()
 }
