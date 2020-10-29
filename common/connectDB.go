@@ -12,10 +12,10 @@ var (
 func Init() {
 	var err error
 	DB, err = sql.Open("postgres", viper.GetString("app.connection-string"))
-	FatalIfNil(err)
+	PanicIfNotNil(err)
 }
 
 func Close() {
 	err := DB.Close()
-	FatalIfNil(err)
+	PanicIfNotNil(err)
 }

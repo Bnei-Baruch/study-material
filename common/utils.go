@@ -2,8 +2,8 @@ package common
 
 import "log"
 
-func FatalIfNil(err error) {
+func PanicIfNotNil(err error) {
 	if err != nil {
-		log.Fatal(err)
+		log.Panic(err)
 	}
 }

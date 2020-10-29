@@ -6,39 +6,23 @@ import (
 	"github.com/Bnei-Baruch/study-material/common"
 	"github.com/Bnei-Baruch/study-material/models"
 	_ "github.com/lib/pq"
-	"github.com/volatiletech/sqlboiler/v4/boil"
-	"log"
+	"github.com/spf13/viper"
+	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 	"net/http"
 )
 
 func handleGetUnits(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 
-	u := &models.Unit{Title: "title 2", Description: "description 2"}
-	err := u.Insert(context.Background(), common.DB, boil.Columns{})
-	common.FatalIfNil(err)
+	units, err := models.Units(qm.OrderBy(`created_at desc`), qm.Limit(viper.GetInt("app.get-limit"))).All(context.Background(), common.DB)
+	common.PanicIfNotNil(err)
 
-	var (
-		unitId      int
-		title       string
-		description string
-	)
-
-	rows, err := common.DB.Query("select unit_id, title, description from units")
-	common.FatalIfNil(err)
-
-	var units []common.UnitForClient
-	for rows.Next() {
-		err := rows.Scan(&unitId, &title, &description)
-		common.FatalIfNil(err)
-
-		units = append(units, common.UnitForClient{Title: title, Description: description})
-		log.Println(unitId, title, description)
+	var forJson []common.UnitForClient
+	for _, u := range units {
+		forJson = append(forJson, common.UnitForClient{Title: u.Title, Description: u.Description})
 	}
-	err = rows.Err()
-	common.FatalIfNil(err)
 
-	b, err := json.Marshal(units)
+	b, err := json.Marshal(forJson)
 
 	w.WriteHeader(http.StatusOK)
 	w.Write(b)

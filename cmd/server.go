@@ -18,8 +18,8 @@ func init() {
 
 func serverFn(cmd *cobra.Command, args []string) {
 	common.Init()
-
-	api.Init()
+	app := api.App{}
+	app.Init()
 
 	common.Close()
 }
