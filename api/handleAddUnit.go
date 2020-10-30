@@ -34,7 +34,7 @@ func handleAddUnit(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		createdAt = time.Now()
 	}
-	if last != nil && last.CreatedAt.After(createdAt) {
+	if last != nil && !last.CreatedAt.Before(createdAt) {
 		return
 	}
 
