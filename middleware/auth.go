@@ -3,6 +3,7 @@ package middleware
 import (
 	"context"
 	"github.com/coreos/go-oidc"
+	"github.com/spf13/viper"
 	"log"
 	"net/http"
 	"strings"
@@ -16,13 +17,13 @@ func AuthMiddleware(tokenVerifier *oidc.IDTokenVerifier) func(h http.Handler) ht
 				return
 			}
 
-			if rsa := fromAppScript(r); rsa != "" {
-				log.Printf("RSA Authorization %s", rsa)
-				if ok := validateRsa(rsa); ok {
+			if pass := fromAppScript(r); pass != "" {
+				log.Printf("Authorization with passsword")
+				if ok := validatePass(pass); ok {
 					next.ServeHTTP(w, r)
 					return
 				}
-
+				log.Printf("Authorization wrong passsword")
 				authError(w, next)
 				return
 			}
@@ -45,8 +46,8 @@ func AuthMiddleware(tokenVerifier *oidc.IDTokenVerifier) func(h http.Handler) ht
 	}
 }
 
-func validateRsa(rsa string) bool {
-	return true
+func validatePass(pass string) bool {
+	return pass == viper.GetString("app.app-script-pass")
 }
 
 func permission(token *oidc.IDToken) error {
@@ -60,13 +61,11 @@ func authError(w http.ResponseWriter, h http.Handler) http.Handler {
 }
 
 func fromAppScript(r *http.Request) string {
-	rsaHeader := strings.Split(strings.TrimSpace(r.Header.Get("Authorization")), " ")
+	passHeader := strings.Split(strings.TrimSpace(r.Header.Get("Authorization")), " ")
 
-	log.Printf("Authorization header from app script %s", rsaHeader)
-	if len(rsaHeader) == 2 &&
-		strings.ToLower(rsaHeader[0]) == "rsa" &&
-		len(rsaHeader[1]) > 0 {
-		return rsaHeader[1]
+	if len(passHeader) == 2 && strings.ToLower(passHeader[0]) == "pass" && len(passHeader[1]) > 0 {
+		log.Printf("Authorization header from app script")
+		return passHeader[1]
 	}
 	return ""
 }

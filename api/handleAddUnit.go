@@ -15,8 +15,6 @@ import (
 
 func handleAddUnit(w http.ResponseWriter, r *http.Request) {
 
-	log.Print(`handleAddUnit full Request`, r)
-
 	if err := r.ParseForm(); err != nil {
 		log.Print("can't create unit wrong request body", err)
 	}
@@ -60,7 +58,7 @@ func removeEarlyIfNeed() {
 	border, err := m.Units(OrderBy(`created_at desc`), Offset(viper.GetInt("app.BASE_LIMIT_UNITS"))).One(context.Background(), cm.DB)
 	cm.PanicIfNotNil(err)
 
-	units, err := m.Units(Where("created_at > ?", border.CreatedAt)).All(context.Background(), cm.DB)
+	units, err := m.Units(Where("created_at < ?", border.CreatedAt)).All(context.Background(), cm.DB)
 	cm.PanicIfNotNil(err)
 
 	_, err = units.DeleteAll(context.Background(), cm.DB)

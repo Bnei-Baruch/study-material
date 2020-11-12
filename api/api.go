@@ -2,7 +2,7 @@ package api
 
 import (
 	"context"
-	"github.com/Bnei-Baruch/study-material/api/middleware"
+	"github.com/Bnei-Baruch/study-material/middleware"
 	"github.com/coreos/go-oidc"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
