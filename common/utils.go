@@ -1,6 +1,8 @@
 package common
 
-import "log"
+import (
+	"log"
+)
 
 func PanicIfNotNil(err error) {
 	if err != nil {

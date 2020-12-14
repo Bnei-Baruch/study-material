@@ -11,6 +11,8 @@ import (
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/Bnei-Baruch/study-material/common"
 )
 
 func handleAddUnit(w http.ResponseWriter, r *http.Request) {
@@ -36,7 +38,10 @@ func handleAddUnit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	u := &m.Unit{Title: r.FormValue("title"), Description: r.FormValue("description"), CreatedAt: createdAt}
+	editor := new(common.HtmlEditor)
+	html := editor.Init(r.FormValue("description"))
+
+	u := &m.Unit{Title: r.FormValue("title"), Description: html, CreatedAt: createdAt}
 	err = u.Insert(context.Background(), cm.DB, boil.Infer())
 	cm.PanicIfNotNil(err)
 
