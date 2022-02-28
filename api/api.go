@@ -26,7 +26,7 @@ func (a *App) Init() {
 		middleware.AuthMiddleware(a.verifier)(
 			a.router))
 
-	if err := http.ListenAndServe("localhost:8080", handler); err != nil {
+	if err := http.ListenAndServe(viper.GetString("server.bind-address"), handler); err != nil {
 		log.Fatal(err)
 	}
 }
